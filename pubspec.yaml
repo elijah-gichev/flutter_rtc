@@ -11,13 +11,13 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
-  flutter_background: ^1.0.0
   flutter_webrtc: ^0.8.5
-  # Required for MediaRecorder example
-  path_provider: ^2.0.2
 
   firebase_core: ^1.15.0
   firebase_database: ^9.0.12
+
+
+  flutter_bloc: ^8.0.1
 
 dev_dependencies:
   flutter_test:
