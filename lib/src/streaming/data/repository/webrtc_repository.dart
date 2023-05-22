@@ -1,6 +1,6 @@
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
-class FaceToFaceStreamingService {
+class WebRTCRepository {
   late final RTCPeerConnection _peerConnection;
 
   Future<void> init({
@@ -12,7 +12,8 @@ class FaceToFaceStreamingService {
     required MediaStream localStream,
   }) async {
     try {
-      _peerConnection = await createPeerConnection(_configuration, _loopbackConstraints);
+      _peerConnection =
+          await createPeerConnection(_configuration, _loopbackConstraints);
 
       _peerConnection.onSignalingState = _onSignalingState;
       _peerConnection.onIceGatheringState = _onIceGatheringState;
@@ -67,15 +68,18 @@ class FaceToFaceStreamingService {
         final sdpMLineIndex = iceData['sdpMLineIndex'] as int;
         final sdpMid = iceData['sdpMid'] as String;
 
-        _peerConnection.addCandidate(RTCIceCandidate(candidate, sdpMid, sdpMLineIndex));
+        _peerConnection
+            .addCandidate(RTCIceCandidate(candidate, sdpMid, sdpMLineIndex));
       } else {
         final sdpMap = msg['sdp'] as Map<Object?, Object?>;
         final String type = sdpMap['type'] as String;
         final String sdp = sdpMap['sdp'] as String;
         if (type == 'offer') {
-          await _peerConnection.setRemoteDescription(RTCSessionDescription(sdp, type));
+          await _peerConnection
+              .setRemoteDescription(RTCSessionDescription(sdp, type));
 
-          final answer = await _peerConnection.createAnswer({'offerToReceiveVideo': 1});
+          final answer =
+              await _peerConnection.createAnswer({'offerToReceiveVideo': 1});
 
           await _peerConnection.setLocalDescription(answer);
 
@@ -84,7 +88,8 @@ class FaceToFaceStreamingService {
           await sendMessageAfterOffer(localDescription!);
           // _firebaseRealtimeDB.sendMessage(yourId, {'sdp': localDescription!.toMap()});
         } else if (type == 'answer') {
-          _peerConnection.setRemoteDescription(RTCSessionDescription(sdp, 'answer'));
+          _peerConnection
+              .setRemoteDescription(RTCSessionDescription(sdp, 'answer'));
         }
       }
     }
@@ -98,7 +103,8 @@ class FaceToFaceStreamingService {
     return navigator.mediaDevices.getUserMedia(_mediaConstraints);
   }
 
-  Future<void> _addTracksToPeer(List<MediaStreamTrack> tracks, MediaStream localStream) async {
+  Future<void> _addTracksToPeer(
+      List<MediaStreamTrack> tracks, MediaStream localStream) async {
     tracks.forEach((track) async {
       await _peerConnection.addTrack(track, localStream);
     });
@@ -146,7 +152,11 @@ class FaceToFaceStreamingService {
     'iceServers': [
       {'urls': 'stun:stun.services.mozilla.com'},
       {'urls': 'stun:stun.l.google.com:19302'},
-      {'urls': 'turn:numb.viagenie.ca', 'credential': '10irarog', 'username': 'elijah.gichev@gmail.com'}
+      {
+        'urls': 'turn:numb.viagenie.ca',
+        'credential': '10irarog',
+        'username': 'elijah.gichev@gmail.com'
+      }
     ],
     'sdpSemantics': _sdpSemantics
   };

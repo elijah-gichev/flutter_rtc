@@ -2,20 +2,20 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:flutter_webrtc_example/src/face_to_face_streaming/bloc/peer_connection_bloc.dart';
-import 'package:flutter_webrtc_example/src/services/face_to_face_streaming_service.dart';
-import 'package:flutter_webrtc_example/src/services/firebase_realtime_db.dart';
-import 'package:flutter_webrtc_example/src/services/id_service.dart';
+import 'package:flutter_webrtc_example/src/common/services/id_service.dart';
+import 'package:flutter_webrtc_example/src/streaming/data/repository/fb_realtime_repository.dart';
+import 'package:flutter_webrtc_example/src/streaming/data/repository/webrtc_repository.dart';
+import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/peer_connection_bloc.dart';
 
-class FaceToFaceStreaming extends StatelessWidget {
-  const FaceToFaceStreaming({Key? key}) : super(key: key);
+class StreamingScreen extends StatelessWidget {
+  const StreamingScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => PeerConnectionBloc(
-        FirebaseRealtimeDB(FirebaseDatabase.instance),
-        FaceToFaceStreamingService(),
+      create: (_) => PeerConnectionBloc(
+        FbRealtimeRepository(FirebaseDatabase.instance),
+        WebRTCRepository(),
         IdService(),
       ),
       child: FaceToFaceStreamingView(),
@@ -25,7 +25,8 @@ class FaceToFaceStreaming extends StatelessWidget {
 
 class FaceToFaceStreamingView extends StatefulWidget {
   @override
-  _FaceToFaceStreamingViewState createState() => _FaceToFaceStreamingViewState();
+  _FaceToFaceStreamingViewState createState() =>
+      _FaceToFaceStreamingViewState();
 }
 
 class _FaceToFaceStreamingViewState extends State<FaceToFaceStreamingView> {
@@ -63,7 +64,9 @@ class _FaceToFaceStreamingViewState extends State<FaceToFaceStreamingView> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Expanded(
-                    child: RTCVideoView(context.watch<PeerConnectionBloc>().localRenderer, mirror: true),
+                    child: RTCVideoView(
+                        context.watch<PeerConnectionBloc>().localRenderer,
+                        mirror: true),
                   ),
                   Expanded(
                     child: RTCVideoView(

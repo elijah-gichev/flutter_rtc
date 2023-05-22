@@ -1,16 +1,17 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:flutter_webrtc_example/src/services/face_to_face_streaming_service.dart';
-import 'package:flutter_webrtc_example/src/services/firebase_realtime_db.dart';
-import 'package:flutter_webrtc_example/src/services/id_service.dart';
+import 'package:flutter_webrtc_example/src/common/services/id_service.dart';
+import 'package:flutter_webrtc_example/src/streaming/data/repository/fb_realtime_repository.dart';
+import 'package:flutter_webrtc_example/src/streaming/data/repository/webrtc_repository.dart';
 import 'package:meta/meta.dart';
 
 part 'peer_connection_event.dart';
 part 'peer_connection_state.dart';
 
-class PeerConnectionBloc extends Bloc<PeerConnectionEvent, PeerConnectionState> {
-  final FirebaseRealtimeDB _firebaseRealtimeDB;
-  final FaceToFaceStreamingService _faceToFaceStreamingService;
+class PeerConnectionBloc
+    extends Bloc<PeerConnectionEvent, PeerConnectionState> {
+  final FbRealtimeRepository _firebaseRealtimeDB;
+  final WebRTCRepository _faceToFaceStreamingService;
   final IdService _idService;
 
   final RTCVideoRenderer _localRenderer = RTCVideoRenderer();
@@ -38,8 +39,6 @@ class PeerConnectionBloc extends Bloc<PeerConnectionEvent, PeerConnectionState> 
             });
           },
         );
-
-        add(PeerConnectionEventFake());
       },
     );
 
@@ -66,11 +65,6 @@ class PeerConnectionBloc extends Bloc<PeerConnectionEvent, PeerConnectionState> 
       );
 
       emit(PeerConnectionCallLoadingDone());
-    });
-
-    //
-    on<PeerConnectionEventFake>((event, emit) async {
-      emit(PeerConnectionFake());
     });
   }
 
@@ -129,7 +123,8 @@ class PeerConnectionBloc extends Bloc<PeerConnectionEvent, PeerConnectionState> 
   void _onCandidate(RTCIceCandidate candidate) {
     print('onCandidate: ${candidate.candidate}');
 
-    _firebaseRealtimeDB.sendMessage(_idService.myId, {'ice': candidate.toMap()});
+    _firebaseRealtimeDB
+        .sendMessage(_idService.myId, {'ice': candidate.toMap()});
   }
 
   void _onTrack(RTCTrackEvent event) {

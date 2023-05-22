@@ -3,10 +3,9 @@ import 'dart:core';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_webrtc_example/src/services/firebase_realtime_db.dart';
-
-import 'src/face_to_face_streaming/face_to_face_streaming.dart';
 import 'src/route_item.dart';
+import 'src/streaming/data/repository/fb_realtime_repository.dart';
+import 'src/streaming/presentation/streaming_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,10 +25,16 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final List<RouteItem> items = <RouteItem>[
     RouteItem(
-        title: 'LoopBack Sample',
-        push: (BuildContext context) {
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => FaceToFaceStreaming()));
-        }),
+      title: 'LoopBack Sample',
+      push: (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => StreamingScreen(),
+          ),
+        );
+      },
+    ),
     // RouteItem(
     //     title: 'LoopBack Sample',
     //     push: (BuildContext context) {
@@ -38,7 +43,7 @@ class _MyAppState extends State<MyApp> {
     RouteItem(
       title: 'clear all',
       push: (BuildContext context) {
-        final db = FirebaseRealtimeDB(FirebaseDatabase.instance);
+        final db = FbRealtimeRepository(FirebaseDatabase.instance);
         db.clearAll();
       },
     ),

@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 
-class FirebaseRealtimeDB {
+class FbRealtimeRepository {
   final FirebaseDatabase _database;
 
   StreamSubscription<DatabaseEvent>? onChildAddedSubscription;
 
-  FirebaseRealtimeDB(this._database);
+  FbRealtimeRepository(this._database);
 
   void addOnChildAddedSubscription(void Function(DatabaseEvent) onData) {
     final ref = _database.ref();
@@ -29,7 +29,7 @@ class FirebaseRealtimeDB {
       },
     );
 
-    await ref.remove();
+    //await ref.remove();
   }
 
   Future<void> clearAll() async {
