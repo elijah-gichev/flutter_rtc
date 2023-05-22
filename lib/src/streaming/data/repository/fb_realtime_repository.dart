@@ -20,7 +20,7 @@ class FbRealtimeRepository {
     }
   }
 
-  Future<void> sendMessage(senderId, data) async {
+  Future<void> sendMessage(String senderId, data) async {
     final ref = _database.ref().push();
     await ref.set(
       {

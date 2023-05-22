@@ -34,6 +34,10 @@ class WebRTCRepository {
     }
   }
 
+  Future<void> closePeerConnection() async {
+    await _peerConnection.close();
+  }
+
   Future<void> makeConnection({
     required Future<void> Function(RTCSessionDescription) sendMessageAfterOffer,
   }) async {
@@ -54,13 +58,13 @@ class WebRTCRepository {
 
   void handleMessage({
     required Map<Object?, Object?> data,
-    required int myId,
+    required String myId,
     required Future<void> Function(RTCSessionDescription) sendMessageAfterOffer,
   }) async {
     final msg = data['message'] as Map<Object?, Object?>;
-    final sender = data['sender'] as int;
+    final senderId = data['sender'] as String;
 
-    if (sender != myId) {
+    if (senderId != myId) {
       if (msg['ice'] != null) {
         final iceData = msg['ice'] as Map<Object?, Object?>;
 

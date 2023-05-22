@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:flutter_webrtc_example/main.dart';
 import 'package:flutter_webrtc_example/src/common/services/id_service.dart';
 import 'package:flutter_webrtc_example/src/streaming/data/repository/fb_realtime_repository.dart';
 import 'package:flutter_webrtc_example/src/streaming/data/repository/webrtc_repository.dart';
@@ -16,7 +17,7 @@ class StreamingScreen extends StatelessWidget {
       create: (_) => PeerConnectionBloc(
         FbRealtimeRepository(FirebaseDatabase.instance),
         WebRTCRepository(),
-        IdService(),
+        getIt<IdService>(),
       ),
       child: FaceToFaceStreamingView(),
     );

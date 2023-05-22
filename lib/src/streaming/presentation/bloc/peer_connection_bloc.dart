@@ -10,8 +10,8 @@ part 'peer_connection_state.dart';
 
 class PeerConnectionBloc
     extends Bloc<PeerConnectionEvent, PeerConnectionState> {
-  final FbRealtimeRepository _firebaseRealtimeDB;
-  final WebRTCRepository _faceToFaceStreamingService;
+  final FbRealtimeRepository _fbRealtimeRepository;
+  final WebRTCRepository _webRTCRepository;
   final IdService _idService;
 
   final RTCVideoRenderer _localRenderer = RTCVideoRenderer();
@@ -23,18 +23,18 @@ class PeerConnectionBloc
   late final MediaStream _localStream;
 
   PeerConnectionBloc(
-    this._firebaseRealtimeDB,
-    this._faceToFaceStreamingService,
+    this._fbRealtimeRepository,
+    this._webRTCRepository,
     this._idService,
   ) : super(PeerConnectionInitial()) {
-    _firebaseRealtimeDB.addOnChildAddedSubscription(
+    _fbRealtimeRepository.addOnChildAddedSubscription(
       (event) {
         final data = event.snapshot.value as Map<Object?, Object?>;
-        _faceToFaceStreamingService.handleMessage(
+        _webRTCRepository.handleMessage(
           data: data,
-          myId: _idService.myId,
+          myId: _idService.id,
           sendMessageAfterOffer: (description) async {
-            await _firebaseRealtimeDB.sendMessage(_idService.myId, {
+            await _fbRealtimeRepository.sendMessage(_idService.id, {
               'sdp': description.toMap(),
             });
           },
@@ -44,11 +44,8 @@ class PeerConnectionBloc
 
     on<PeerConnectionInit>((event, emit) async {
       emit(PeerConnectionInitLoading());
-      await _initRenderers();
 
-      final tracks = await _setupLocalRenderer();
-
-      await _initStreamingService(tracks);
+      await _initStreamingConnection();
 
       emit(PeerConnectionInitLoadingDone());
     });
@@ -56,9 +53,9 @@ class PeerConnectionBloc
     on<PeerConnectionLaunchCall>((event, emit) async {
       emit(PeerConnectionCallLoading());
 
-      await _faceToFaceStreamingService.makeConnection(
+      await _webRTCRepository.makeConnection(
         sendMessageAfterOffer: (description) async {
-          await _firebaseRealtimeDB.sendMessage(_idService.myId, {
+          await _fbRealtimeRepository.sendMessage(_idService.id, {
             'sdp': description.toMap(),
           });
         },
@@ -68,23 +65,15 @@ class PeerConnectionBloc
     });
   }
 
-  Future<void> _initRenderers() async {
+  Future<void> _initStreamingConnection() async {
     await _localRenderer.initialize();
     await _remoteRenderer.initialize();
-  }
 
-  Future<List<MediaStreamTrack>> _setupLocalRenderer() async {
-    _localStream = await _faceToFaceStreamingService.getUserMedia();
+    _localStream = await _webRTCRepository.getUserMedia();
     _localRenderer.srcObject = _localStream;
-
     final tracks = await _localStream.getTracks();
-    return tracks;
-  }
 
-  Future<void> _initStreamingService(
-    List<MediaStreamTrack> tracks,
-  ) async {
-    await _faceToFaceStreamingService.init(
+    await _webRTCRepository.init(
       onCandidate: _onCandidate,
       onTrack: _onTrack,
       onAddTrack: _onAddTrack,
@@ -95,11 +84,14 @@ class PeerConnectionBloc
   }
 
   @override
-  Future<void> close() {
-    _localRenderer.dispose();
-    _remoteRenderer.dispose();
+  Future<void> close() async {
+    await _localRenderer.dispose();
+    await _remoteRenderer.dispose();
+    await _localStream.dispose();
 
-    _firebaseRealtimeDB.removeOnChildAddedSubscription();
+    await _webRTCRepository.closePeerConnection();
+
+    _fbRealtimeRepository.removeOnChildAddedSubscription();
 
     return super.close();
   }
@@ -123,8 +115,8 @@ class PeerConnectionBloc
   void _onCandidate(RTCIceCandidate candidate) {
     print('onCandidate: ${candidate.candidate}');
 
-    _firebaseRealtimeDB
-        .sendMessage(_idService.myId, {'ice': candidate.toMap()});
+    _fbRealtimeRepository
+        .sendMessage(_idService.id, {'ice': candidate.toMap()});
   }
 
   void _onTrack(RTCTrackEvent event) {
