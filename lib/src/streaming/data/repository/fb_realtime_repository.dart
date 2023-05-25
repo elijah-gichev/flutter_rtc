@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class FbRealtimeRepository {
   final FirebaseDatabase _database;
 
@@ -32,9 +34,18 @@ class FbRealtimeRepository {
     //await ref.remove();
   }
 
+  Future<void> makeNewAccount(String accountID) async {
+    final ref = _database.ref();
+    await ref.child(accountID).set(
+      {
+        'account_id': accountID,
+        // 'peering_data': ['aaa', 'aaa'],
+      },
+    );
+  }
+
   Future<void> clearAll() async {
     final ref = _database.ref();
-
     await ref.remove();
   }
 }

@@ -3,11 +3,13 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:flutter_webrtc_example/src/common/services/id_service.dart';
 import 'package:flutter_webrtc_example/src/streaming/data/repository/fb_realtime_repository.dart';
 import 'package:flutter_webrtc_example/src/streaming/data/repository/webrtc_repository.dart';
+import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
 
 part 'peer_connection_event.dart';
 part 'peer_connection_state.dart';
 
+@injectable
 class PeerConnectionBloc
     extends Bloc<PeerConnectionEvent, PeerConnectionState> {
   final FbRealtimeRepository _fbRealtimeRepository;

@@ -1,5 +1,7 @@
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class WebRTCRepository {
   late final RTCPeerConnection _peerConnection;
 

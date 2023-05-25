@@ -1,12 +1,8 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:flutter_webrtc_example/main.dart';
-import 'package:flutter_webrtc_example/src/common/services/id_service.dart';
-import 'package:flutter_webrtc_example/src/streaming/data/repository/fb_realtime_repository.dart';
-import 'package:flutter_webrtc_example/src/streaming/data/repository/webrtc_repository.dart';
 import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/peer_connection_bloc.dart';
+import 'package:get_it/get_it.dart';
 
 class StreamingScreen extends StatelessWidget {
   const StreamingScreen({Key? key}) : super(key: key);
@@ -14,11 +10,7 @@ class StreamingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PeerConnectionBloc(
-        FbRealtimeRepository(FirebaseDatabase.instance),
-        WebRTCRepository(),
-        getIt<IdService>(),
-      ),
+      create: (_) => GetIt.I<PeerConnectionBloc>(),
       child: FaceToFaceStreamingView(),
     );
   }

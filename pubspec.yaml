@@ -21,13 +21,18 @@ dependencies:
 
   uuid: ^3.0.7
   shared_preferences: ^2.1.1
+
   get_it: ^7.6.0
+  injectable: ^1.5.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   pedantic: ^1.11.0
+
+  injectable_generator: ^1.5.3
+  build_runner: ^2.1.11
 
 
 
