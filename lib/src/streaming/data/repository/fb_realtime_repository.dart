@@ -30,18 +30,14 @@ class FbRealtimeRepository {
         'message': data,
       },
     );
-
     //await ref.remove();
   }
 
-  Future<void> makeNewAccount(String accountID) async {
+  Future<List<String>> getAllUsers() async {
     final ref = _database.ref();
-    await ref.child(accountID).set(
-      {
-        'account_id': accountID,
-        // 'peering_data': ['aaa', 'aaa'],
-      },
-    );
+
+    final res = await ref.get();
+    return res.children.map((snapshot) => snapshot.value.toString()).toList();
   }
 
   Future<void> clearAll() async {
