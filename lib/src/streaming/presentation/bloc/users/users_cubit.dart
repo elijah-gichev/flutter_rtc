@@ -20,10 +20,12 @@ class UsersCubit extends Cubit<UsersState> {
       final myId = _idService.id;
 
       final users = await _fbRealtimeRepository.getAllUsers();
+
       users.removeWhere((userId) => userId == myId);
 
       emit(UsersCompleted(users));
     } catch (e) {
+      print(e);
       emit(UsersFailure());
     }
   }

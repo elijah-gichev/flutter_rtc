@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_webrtc_example/src/common/services/id_service.dart';
 import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/users/users_cubit.dart';
+import 'package:flutter_webrtc_example/src/streaming/presentation/ui/streaming_screen.dart';
+import 'package:get_it/get_it.dart';
 
 class UsersScreen extends StatelessWidget {
   const UsersScreen({Key? key}) : super(key: key);
@@ -10,7 +13,7 @@ class UsersScreen extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Flutter-WebRTC example'),
+          title: Text('User: ${GetIt.I<IdService>().id}'),
         ),
         body: BlocBuilder<UsersCubit, UsersState>(
           builder: (context, state) {
@@ -26,12 +29,19 @@ class UsersScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(0.0),
                 itemCount: state.ids.length,
                 itemBuilder: (context, i) {
-                  final item = state.ids[i];
+                  final id = state.ids[i];
                   return ListBody(
                     children: <Widget>[
                       ListTile(
-                        title: Text(item),
-                        //onTap: () => item.push(context),
+                        title: Text(id),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => StreamingScreen(id),
+                            ),
+                          );
+                        },
                         trailing: Icon(Icons.arrow_right),
                       ),
                       Divider()

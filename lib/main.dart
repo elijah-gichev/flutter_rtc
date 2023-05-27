@@ -3,9 +3,12 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc_example/src/auth/presentation/bloc/cubit/auth_cubit.dart';
+import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/users/users_cubit.dart';
+import 'package:flutter_webrtc_example/src/streaming/presentation/ui/users_screen.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'src/common/config/injectable/injectable_config.dart';
+import 'src/common/services/id_service.dart';
 import 'src/route_item.dart';
 import 'src/streaming/presentation/ui/streaming_screen.dart';
 
@@ -35,24 +38,27 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final List<RouteItem> items = <RouteItem>[
-    RouteItem(
-      title: 'LoopBack Sample',
-      push: (BuildContext context) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => StreamingScreen(),
-          ),
-        );
-      },
-    ),
+    // RouteItem(
+    //   title: 'LoopBack Sample',
+    //   push: (BuildContext context) {
+    //     Navigator.push(
+    //       context,
+    //       MaterialPageRoute(
+    //         builder: (_) => StreamingScreen(),
+    //       ),
+    //     );
+    //   },
+    // ),
     RouteItem(
       title: 'Users',
       push: (BuildContext context) {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => StreamingScreen(),
+            builder: (_) => BlocProvider(
+              create: (_) => GetIt.I<UsersCubit>()..load(),
+              child: UsersScreen(),
+            ),
           ),
         );
       },
@@ -64,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Flutter-WebRTC example'),
+          title: Text('User: ${GetIt.I<IdService>().id}'),
         ),
         body: BlocBuilder<AuthCubit, AuthState>(
           builder: (context, state) {

@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/peer_connection_bloc.dart';
+import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/peer_connection/peer_connection_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 class StreamingScreen extends StatelessWidget {
-  const StreamingScreen({Key? key}) : super(key: key);
+  final String id;
+  const StreamingScreen(this.id, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => GetIt.I<PeerConnectionBloc>(),
-      child: FaceToFaceStreamingView(),
+      child: FaceToFaceStreamingView(id),
     );
   }
 }
 
 class FaceToFaceStreamingView extends StatefulWidget {
+  final String id;
+
+  FaceToFaceStreamingView(this.id);
   @override
   _FaceToFaceStreamingViewState createState() =>
       _FaceToFaceStreamingViewState();
@@ -26,7 +30,7 @@ class _FaceToFaceStreamingViewState extends State<FaceToFaceStreamingView> {
   @override
   void initState() {
     super.initState();
-    context.read<PeerConnectionBloc>().add(PeerConnectionInit());
+    context.read<PeerConnectionBloc>().add(PeerConnectionInit(widget.id));
   }
 
   // void _sendDtmf() async {

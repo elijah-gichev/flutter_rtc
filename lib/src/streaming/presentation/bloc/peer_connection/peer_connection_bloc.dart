@@ -24,28 +24,20 @@ class PeerConnectionBloc
 
   late final MediaStream _localStream;
 
+  String? recipientId;
+
+  bool isSender = false;
+
   PeerConnectionBloc(
     this._fbRealtimeRepository,
     this._webRTCRepository,
     this._idService,
   ) : super(PeerConnectionInitial()) {
-    _fbRealtimeRepository.addOnChildAddedSubscription(
-      (event) {
-        final data = event.snapshot.value as Map<Object?, Object?>;
-        _webRTCRepository.handleMessage(
-          data: data,
-          myId: _idService.id,
-          sendMessageAfterOffer: (description) async {
-            await _fbRealtimeRepository.sendMessage(_idService.id, {
-              'sdp': description.toMap(),
-            });
-          },
-        );
-      },
-    );
+    makeSubscriptionYourself();
 
     on<PeerConnectionInit>((event, emit) async {
       emit(PeerConnectionInitLoading());
+      recipientId = event.recipientId;
 
       await _initStreamingConnection();
 
@@ -55,9 +47,12 @@ class PeerConnectionBloc
     on<PeerConnectionLaunchCall>((event, emit) async {
       emit(PeerConnectionCallLoading());
 
+      isSender = true;
+      makeSubscriptionSender();
+
       await _webRTCRepository.makeConnection(
         sendMessageAfterOffer: (description) async {
-          await _fbRealtimeRepository.sendMessage(_idService.id, {
+          await _fbRealtimeRepository.sendMessage(_idService.id, recipientId!, {
             'sdp': description.toMap(),
           });
         },
@@ -82,6 +77,50 @@ class PeerConnectionBloc
       onRemoveTrack: _onRemoveTrack,
       tracks: tracks,
       localStream: _localStream,
+    );
+  }
+
+  void makeSubscriptionYourself() {
+    _fbRealtimeRepository.addOnChildAddedSubscription(
+      _idService.id,
+      (event) {
+        if (event.snapshot.key != 'account_id') {
+          final data = event.snapshot.value as Map<Object?, Object?>;
+
+          _webRTCRepository.handleMessage(
+            data: data,
+            myId: _idService.id,
+            sendMessageAfterOffer: (description) async {
+              await _fbRealtimeRepository
+                  .sendMessage(_idService.id, recipientId!, {
+                'sdp': description.toMap(),
+              });
+            },
+          );
+        }
+      },
+    );
+  }
+
+  void makeSubscriptionSender() {
+    _fbRealtimeRepository.addOnChildAddedSubscription(
+      recipientId!,
+      (event) {
+        if (event.snapshot.key != 'account_id') {
+          final data = event.snapshot.value as Map<Object?, Object?>;
+
+          _webRTCRepository.handleMessage(
+            data: data,
+            myId: _idService.id,
+            sendMessageAfterOffer: (description) async {
+              await _fbRealtimeRepository
+                  .sendMessage(_idService.id, recipientId!, {
+                'sdp': description.toMap(),
+              });
+            },
+          );
+        }
+      },
     );
   }
 
@@ -118,7 +157,15 @@ class PeerConnectionBloc
     print('onCandidate: ${candidate.candidate}');
 
     _fbRealtimeRepository
-        .sendMessage(_idService.id, {'ice': candidate.toMap()});
+        .sendMessage(_idService.id, recipientId!, {'ice': candidate.toMap()});
+
+    // if (isSender) {
+    //   _fbRealtimeRepository
+    //       .sendMessage(_idService.id, recipientId!, {'ice': candidate.toMap()});
+    // } else {
+    //   _fbRealtimeRepository
+    //       .sendMessage(recipientId!, _idService.id, {'ice': candidate.toMap()});
+    // }
   }
 
   void _onTrack(RTCTrackEvent event) {
