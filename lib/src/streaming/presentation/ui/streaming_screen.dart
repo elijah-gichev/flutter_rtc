@@ -1,9 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/peer_connection/peer_connection_bloc.dart';
 import 'package:get_it/get_it.dart';
 
+@RoutePage()
 class StreamingScreen extends StatelessWidget {
   final String id;
   const StreamingScreen(this.id, {Key? key}) : super(key: key);

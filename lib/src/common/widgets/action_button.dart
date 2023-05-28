@@ -16,24 +16,27 @@ class ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(6.0),
-          color: filled ? CustomColors.primary : CustomColors.background,
-          border: !filled
-              ? Border.all(
-                  color: CustomColors.primary,
-                  width: 3,
-                )
-              : null),
-      child: Text(
-        title,
-        style: TextStyle(
-            color: filled ? CustomColors.background : CustomColors.primary,
-            fontSize: 20.0,
-            fontWeight: FontWeight.w600),
+    return InkWell(
+      onTap: onPressed,
+      child: Container(
+        height: 50,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(6.0),
+            color: filled ? CustomColors.primary : CustomColors.background,
+            border: !filled
+                ? Border.all(
+                    color: CustomColors.primary,
+                    width: 3,
+                  )
+                : null),
+        child: Text(
+          title,
+          style: TextStyle(
+              color: filled ? CustomColors.background : CustomColors.primary,
+              fontSize: 20.0,
+              fontWeight: FontWeight.w600),
+        ),
       ),
     );
   }

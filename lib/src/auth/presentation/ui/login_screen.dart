@@ -1,8 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_webrtc_example/src/common/config/router/app_router.dart';
 import 'package:flutter_webrtc_example/src/common/theme/palette.dart';
 import 'package:flutter_webrtc_example/src/common/widgets/action_button.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+@RoutePage()
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -57,7 +59,9 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   ActionButton(
                     title: 'Join a meeting',
-                    onPressed: () {},
+                    onPressed: () {
+                      context.router.push(const UsersRoute());
+                    },
                   ),
                   SizedBox(height: 20),
                   Row(
@@ -65,14 +69,18 @@ class LoginScreen extends StatelessWidget {
                       Expanded(
                         child: ActionButton(
                           title: 'Login',
-                          onPressed: () {},
+                          onPressed: () {
+                            context.router.push(const UsersRoute());
+                          },
                         ),
                       ),
                       Expanded(
                         child: ActionButton(
                           title: 'Sign up',
                           filled: false,
-                          onPressed: () {},
+                          onPressed: () {
+                            context.router.push(const UsersRoute());
+                          },
                         ),
                       ),
                     ],

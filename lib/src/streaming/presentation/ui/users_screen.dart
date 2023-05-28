@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc_example/src/common/services/id_service.dart';
@@ -5,7 +6,16 @@ import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/users/use
 import 'package:flutter_webrtc_example/src/streaming/presentation/ui/streaming_screen.dart';
 import 'package:get_it/get_it.dart';
 
-class UsersScreen extends StatelessWidget {
+@RoutePage()
+class UsersScreen extends StatelessWidget implements AutoRouteWrapper {
+  @override
+  Widget wrappedRoute(BuildContext context) {
+    return BlocProvider(
+      create: (_) => GetIt.I<UsersCubit>()..load(),
+      child: this,
+    );
+  }
+
   const UsersScreen({Key? key}) : super(key: key);
 
   @override

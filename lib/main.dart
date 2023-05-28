@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc_example/src/auth/presentation/bloc/cubit/auth_cubit.dart';
 import 'package:flutter_webrtc_example/src/auth/presentation/ui/login_screen.dart';
+import 'package:flutter_webrtc_example/src/common/config/router/app_router.dart';
 import 'package:flutter_webrtc_example/src/common/widgets/incoming_call_alert.dart';
 import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/users/users_cubit.dart';
 import 'package:flutter_webrtc_example/src/streaming/presentation/ui/streaming_screen.dart';
@@ -48,6 +49,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _appRouter = AppRouter();
+
   final List<RouteItem> items = <RouteItem>[
     RouteItem(
       title: 'Users',
@@ -67,8 +70,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: LoginScreen(),
+    return MaterialApp.router(
+      routerConfig: _appRouter.config(),
       theme: ThemeData(
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
