@@ -25,6 +25,7 @@ dependencies:
   injectable: ^1.5.3
 
   google_fonts: ^4.0.4
+  intl: ^0.18.1
 
   auto_route: ^7.2.0
 

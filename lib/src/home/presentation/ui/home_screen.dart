@@ -13,10 +13,10 @@ class HomeRootScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AutoTabsRouter(
-      routes: const [
+      routes: [
         HomeRoute(),
-        HomeRoute(),
-        HomeRoute(),
+        HistoryRoute(),
+        SettingsRoute(),
       ],
       transitionBuilder: (context, child, animation) => FadeTransition(
         opacity: animation,
@@ -38,18 +38,20 @@ class HomeRootScreen extends StatelessWidget {
               items: [
                 BottomNavigationBarItem(
                   label: 'Home',
-                  icon: Icon(Icons.home, color: CustomColors.secondary),
-                  activeIcon: Icon(Icons.home, color: CustomColors.background),
+                  icon: Icon(Icons.house, color: CustomColors.secondary),
+                  activeIcon: Icon(Icons.house, color: CustomColors.background),
                 ),
                 BottomNavigationBarItem(
-                  label: 'Home',
-                  icon: Icon(Icons.home, color: CustomColors.secondary),
-                  activeIcon: Icon(Icons.home, color: CustomColors.background),
+                  label: 'History',
+                  icon: Icon(Icons.history, color: CustomColors.secondary),
+                  activeIcon:
+                      Icon(Icons.history, color: CustomColors.background),
                 ),
                 BottomNavigationBarItem(
-                  label: 'Home',
-                  icon: Icon(Icons.home, color: CustomColors.secondary),
-                  activeIcon: Icon(Icons.home, color: CustomColors.background),
+                  label: 'Settings',
+                  icon: Icon(Icons.settings, color: CustomColors.secondary),
+                  activeIcon:
+                      Icon(Icons.settings, color: CustomColors.background),
                 ),
               ],
             ));
@@ -95,14 +97,14 @@ class HomeScreen extends StatelessWidget {
                 ActionButton(
                   title: 'New Meeting',
                   onPressed: () {
-                    // Handle button 1 press
+                    context.router.push(UsersRoute());
                   },
                 ),
                 SizedBox(height: 35),
                 ActionButton(
                   filled: false,
                   onPressed: () {
-                    // Handle button 2 press
+                    context.router.push(UsersRoute());
                   },
                   title: 'Join a meeting',
                 ),

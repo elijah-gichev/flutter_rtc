@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc_example/src/auth/presentation/ui/login_screen.dart';
+import 'package:flutter_webrtc_example/src/history/presentation/ui/history_screen.dart';
 import 'package:flutter_webrtc_example/src/home/presentation/ui/home_screen.dart';
+import 'package:flutter_webrtc_example/src/settings/presentation/ui/settings_screen.dart';
 import 'package:flutter_webrtc_example/src/streaming/presentation/ui/streaming_screen.dart';
 import 'package:flutter_webrtc_example/src/streaming/presentation/ui/users_screen.dart';
 
@@ -27,6 +29,12 @@ class AppRouter extends _$AppRouter {
           children: [
             AutoRoute(
               page: HomeRoute.page,
+            ),
+            AutoRoute(
+              page: HistoryRoute.page,
+            ),
+            AutoRoute(
+              page: SettingsRoute.page,
               initial: true,
             ),
           ],

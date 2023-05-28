@@ -15,6 +15,24 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    SettingsRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const SettingsScreen(),
+      );
+    },
+    HomeRootRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const HomeRootScreen(),
+      );
+    },
+    HomeRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: HomeScreen(),
+      );
+    },
     LoginRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -33,23 +51,62 @@ abstract class _$AppRouter extends RootStackRouter {
         routeData: routeData,
         child: StreamingScreen(
           args.id,
+          args.name,
           key: args.key,
         ),
       );
     },
-    HomeRootRoute.name: (routeData) {
+    HistoryRoute.name: (routeData) {
+      final args = routeData.argsAs<HistoryRouteArgs>(
+          orElse: () => const HistoryRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const HomeRootScreen(),
-      );
-    },
-    HomeRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: HomeScreen(),
+        child: HistoryScreen(key: args.key),
       );
     },
   };
+}
+
+/// generated route for
+/// [SettingsScreen]
+class SettingsRoute extends PageRouteInfo<void> {
+  const SettingsRoute({List<PageRouteInfo>? children})
+      : super(
+          SettingsRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SettingsRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [HomeRootScreen]
+class HomeRootRoute extends PageRouteInfo<void> {
+  const HomeRootRoute({List<PageRouteInfo>? children})
+      : super(
+          HomeRootRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'HomeRootRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [HomeScreen]
+class HomeRoute extends PageRouteInfo<void> {
+  const HomeRoute({List<PageRouteInfo>? children})
+      : super(
+          HomeRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'HomeRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
@@ -85,12 +142,14 @@ class UsersRoute extends PageRouteInfo<void> {
 class StreamingRoute extends PageRouteInfo<StreamingRouteArgs> {
   StreamingRoute({
     required String id,
+    required String name,
     Key? key,
     List<PageRouteInfo>? children,
   }) : super(
           StreamingRoute.name,
           args: StreamingRouteArgs(
             id: id,
+            name: name,
             key: key,
           ),
           initialChildren: children,
@@ -105,43 +164,47 @@ class StreamingRoute extends PageRouteInfo<StreamingRouteArgs> {
 class StreamingRouteArgs {
   const StreamingRouteArgs({
     required this.id,
+    required this.name,
     this.key,
   });
 
   final String id;
 
+  final String name;
+
   final Key? key;
 
   @override
   String toString() {
-    return 'StreamingRouteArgs{id: $id, key: $key}';
+    return 'StreamingRouteArgs{id: $id, name: $name, key: $key}';
   }
 }
 
 /// generated route for
-/// [HomeRootScreen]
-class HomeRootRoute extends PageRouteInfo<void> {
-  const HomeRootRoute({List<PageRouteInfo>? children})
-      : super(
-          HomeRootRoute.name,
+/// [HistoryScreen]
+class HistoryRoute extends PageRouteInfo<HistoryRouteArgs> {
+  HistoryRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          HistoryRoute.name,
+          args: HistoryRouteArgs(key: key),
           initialChildren: children,
         );
 
-  static const String name = 'HomeRootRoute';
+  static const String name = 'HistoryRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<HistoryRouteArgs> page =
+      PageInfo<HistoryRouteArgs>(name);
 }
 
-/// generated route for
-/// [HomeScreen]
-class HomeRoute extends PageRouteInfo<void> {
-  const HomeRoute({List<PageRouteInfo>? children})
-      : super(
-          HomeRoute.name,
-          initialChildren: children,
-        );
+class HistoryRouteArgs {
+  const HistoryRouteArgs({this.key});
 
-  static const String name = 'HomeRoute';
+  final Key? key;
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  @override
+  String toString() {
+    return 'HistoryRouteArgs{key: $key}';
+  }
 }
