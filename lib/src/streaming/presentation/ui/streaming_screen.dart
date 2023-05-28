@@ -30,7 +30,7 @@ class _FaceToFaceStreamingViewState extends State<FaceToFaceStreamingView> {
   @override
   void initState() {
     super.initState();
-    context.read<PeerConnectionBloc>().add(PeerConnectionInit(widget.id));
+    context.read<PeerConnectionBloc>().add(PeerConnectionInitiated(widget.id));
   }
 
   // void _sendDtmf() async {
@@ -66,9 +66,13 @@ class _FaceToFaceStreamingViewState extends State<FaceToFaceStreamingView> {
                         mirror: true),
                   ),
                   Expanded(
-                    child: RTCVideoView(
-                      context.watch<PeerConnectionBloc>().remoteRenderer,
-                    ),
+                    child: state is PeerConnectionCallLoadingDone
+                        ? RTCVideoView(
+                            context.watch<PeerConnectionBloc>().remoteRenderer,
+                          )
+                        : Center(
+                            child: CircularProgressIndicator(),
+                          ),
                   ),
                 ],
               ),
@@ -76,18 +80,28 @@ class _FaceToFaceStreamingViewState extends State<FaceToFaceStreamingView> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.read<PeerConnectionBloc>().add(PeerConnectionLaunchCall());
+      floatingActionButton:
+          BlocBuilder<PeerConnectionBloc, PeerConnectionState>(
+        builder: (context, state) {
+          return state is PeerConnectionCallLoadingDone
+              ? FloatingActionButton(
+                  onPressed: () {
+                    context
+                        .read<PeerConnectionBloc>()
+                        .add(PeerConnectionCallCanceled());
+                  },
+                  child: Icon(Icons.call_end),
+                )
+              : FloatingActionButton(
+                  onPressed: () {
+                    context
+                        .read<PeerConnectionBloc>()
+                        .add(PeerConnectionCallStarted());
+                  },
+                  child: Icon(Icons.phone),
+                );
         },
-        tooltip: 'Call',
-        child: Icon(Icons.phone),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _inCalling ? _hangUp : _makeCall,
-      //   tooltip: _inCalling ? 'Hangup' : 'Call',
-      //   child: Icon(_inCalling ? Icons.call_end : Icons.phone),
-      // ),
     );
   }
 }

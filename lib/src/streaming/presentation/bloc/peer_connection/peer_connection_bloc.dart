@@ -16,38 +16,31 @@ class PeerConnectionBloc
   final WebRTCRepository _webRTCRepository;
   final IdService _idService;
 
-  final RTCVideoRenderer _localRenderer = RTCVideoRenderer();
-  final RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
-
-  RTCVideoRenderer get localRenderer => _localRenderer;
-  RTCVideoRenderer get remoteRenderer => _remoteRenderer;
+  final RTCVideoRenderer localRenderer = RTCVideoRenderer();
+  final RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
 
   late final MediaStream _localStream;
 
   String? recipientId;
 
-  bool isSender = false;
-
   PeerConnectionBloc(
     this._fbRealtimeRepository,
     this._webRTCRepository,
     this._idService,
-  ) : super(PeerConnectionInitial()) {
-    makeSubscriptionYourself();
-
-    on<PeerConnectionInit>((event, emit) async {
-      emit(PeerConnectionInitLoading());
+  ) : super(PeerConnectionInitLoading()) {
+    on<PeerConnectionInitiated>((event, emit) async {
       recipientId = event.recipientId;
 
-      await _initStreamingConnection();
+      await _initStreamingConnection(emit);
+
+      makeSubscriptionYourself();
 
       emit(PeerConnectionInitLoadingDone());
     });
 
-    on<PeerConnectionLaunchCall>((event, emit) async {
+    on<PeerConnectionCallStarted>((event, emit) async {
       emit(PeerConnectionCallLoading());
 
-      isSender = true;
       makeSubscriptionSender();
 
       await _webRTCRepository.makeConnection(
@@ -57,17 +50,27 @@ class PeerConnectionBloc
           });
         },
       );
-
-      emit(PeerConnectionCallLoadingDone());
     });
+
+    on<PeerConnectionCallCanceled>((event, emit) async {
+      _cancelCall();
+      emit(PeerConnectionCancelCall());
+    });
+
+    on<PeerConnectionReady>(
+      (event, emit) {
+        emit(PeerConnectionCallLoadingDone());
+      },
+    );
   }
 
-  Future<void> _initStreamingConnection() async {
-    await _localRenderer.initialize();
-    await _remoteRenderer.initialize();
+  Future<void> _initStreamingConnection(
+      Emitter<PeerConnectionState> emit) async {
+    await localRenderer.initialize();
+    await remoteRenderer.initialize();
 
     _localStream = await _webRTCRepository.getUserMedia();
-    _localRenderer.srcObject = _localStream;
+    localRenderer.srcObject = _localStream;
     final tracks = await _localStream.getTracks();
 
     await _webRTCRepository.init(
@@ -84,20 +87,18 @@ class PeerConnectionBloc
     _fbRealtimeRepository.addOnChildAddedSubscription(
       _idService.id,
       (event) {
-        if (event.snapshot.key != 'account_id') {
-          final data = event.snapshot.value as Map<Object?, Object?>;
+        final data = event.snapshot.value as Map<Object?, Object?>;
 
-          _webRTCRepository.handleMessage(
-            data: data,
-            myId: _idService.id,
-            sendMessageAfterOffer: (description) async {
-              await _fbRealtimeRepository
-                  .sendMessage(_idService.id, recipientId!, {
-                'sdp': description.toMap(),
-              });
-            },
-          );
-        }
+        _webRTCRepository.handleMessage(
+          data: data,
+          myId: _idService.id,
+          sendMessageAfterOffer: (description) async {
+            await _fbRealtimeRepository
+                .sendMessage(_idService.id, recipientId!, {
+              'sdp': description.toMap(),
+            });
+          },
+        );
       },
     );
   }
@@ -124,66 +125,65 @@ class PeerConnectionBloc
     );
   }
 
-  @override
-  Future<void> close() async {
-    await _localRenderer.dispose();
-    await _remoteRenderer.dispose();
-    await _localStream.dispose();
-
-    await _webRTCRepository.closePeerConnection();
-
-    _fbRealtimeRepository.removeOnChildAddedSubscription();
-
-    return super.close();
+  void _cancelCall() async {
+    try {
+      await _localStream.dispose();
+      await _webRTCRepository.closePeerConnection();
+      localRenderer.srcObject = null;
+      remoteRenderer.srcObject = null;
+    } catch (e) {
+      print(e.toString());
+    }
   }
-
-  // void _hangUp() async {
-  //   try {
-  //     await _localStream?.dispose();
-  //     await _peerConnection?.close();
-  //     _peerConnection = null;
-  //     _localRenderer.srcObject = null;
-  //     _remoteRenderer.srcObject = null;
-  //   } catch (e) {
-  //     print(e.toString());
-  //   }
-  //   setState(() {
-  //     _inCalling = false;
-  //   });
-  //   // _timer?.cancel();
-  // }
 
   void _onCandidate(RTCIceCandidate candidate) {
     print('onCandidate: ${candidate.candidate}');
 
     _fbRealtimeRepository
         .sendMessage(_idService.id, recipientId!, {'ice': candidate.toMap()});
-
-    // if (isSender) {
-    //   _fbRealtimeRepository
-    //       .sendMessage(_idService.id, recipientId!, {'ice': candidate.toMap()});
-    // } else {
-    //   _fbRealtimeRepository
-    //       .sendMessage(recipientId!, _idService.id, {'ice': candidate.toMap()});
-    // }
   }
 
   void _onTrack(RTCTrackEvent event) {
-    print('onTrack');
     if (event.track.kind == 'video') {
-      _remoteRenderer.srcObject = event.streams[0];
+      remoteRenderer.srcObject = event.streams[0];
+      add(PeerConnectionReady());
     }
   }
 
   void _onAddTrack(MediaStream stream, MediaStreamTrack track) {
+    print('_remoteRenderer onAddTrack');
     if (track.kind == 'video') {
-      _remoteRenderer.srcObject = stream;
+      remoteRenderer.srcObject = stream;
+      add(PeerConnectionReady());
     }
   }
 
   void _onRemoveTrack(MediaStream stream, MediaStreamTrack track) {
+    print('_remoteRenderer onRemoveTrack');
     if (track.kind == 'video') {
-      _remoteRenderer.srcObject = null;
+      remoteRenderer.srcObject = null;
     }
+  }
+
+  @override
+  Future<void> close() async {
+    await localRenderer.dispose();
+    await remoteRenderer.dispose();
+    await _localStream.dispose();
+
+    await _webRTCRepository.closePeerConnection();
+
+    _fbRealtimeRepository.removeOnChildAddedSubscription();
+    await _fbRealtimeRepository.clearAll();
+
+    return super.close();
+  }
+
+  @override
+  void onChange(Change<PeerConnectionState> change) {
+    super.onChange(change);
+    print(change.toString());
+    print(change.currentState.toString());
+    print(change.nextState.toString());
   }
 }

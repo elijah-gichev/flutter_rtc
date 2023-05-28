@@ -3,12 +3,14 @@ part of 'peer_connection_bloc.dart';
 @immutable
 abstract class PeerConnectionEvent {}
 
-class PeerConnectionInit extends PeerConnectionEvent {
+class PeerConnectionInitiated extends PeerConnectionEvent {
   final String recipientId;
 
-  PeerConnectionInit(this.recipientId);
+  PeerConnectionInitiated(this.recipientId);
 }
 
-class PeerConnectionLaunchCall extends PeerConnectionEvent {}
+class PeerConnectionCallStarted extends PeerConnectionEvent {}
 
-class PeerConnectionEventFake extends PeerConnectionEvent {}
+class PeerConnectionCallCanceled extends PeerConnectionEvent {}
+
+class PeerConnectionReady extends PeerConnectionEvent {}

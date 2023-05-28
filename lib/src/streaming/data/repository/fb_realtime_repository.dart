@@ -1,34 +1,30 @@
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter_webrtc_example/src/common/services/id_service.dart';
 import 'package:injectable/injectable.dart';
 
 @lazySingleton
 class FbRealtimeRepository {
   final FirebaseDatabase _database;
-  final IdService _idService;
 
   final List<StreamSubscription<DatabaseEvent>> subscriptions = [];
-
-  //StreamSubscription<DatabaseEvent>? onChildAddedSubscription;
-
-  late final DatabaseReference ref;
+  final List<DatabaseReference> refs = [];
 
   FbRealtimeRepository(
     this._database,
-    this._idService,
-  ) {
-    ref = _database.ref(_idService.id);
-  }
+  );
 
   void addOnChildAddedSubscription(
     String id,
     void Function(DatabaseEvent) onData,
   ) {
-    final refSubscription = _database.ref('$id/peering');
-    final subs = refSubscription.onChildAdded.listen(onData);
-    subscriptions.add(subs);
+    final refUrl = '$id/peering';
+
+    final ref = _database.ref(refUrl);
+    final refSubscription = ref.onChildAdded.listen(onData);
+
+    subscriptions.add(refSubscription);
+    refs.add(ref);
   }
 
   void removeOnChildAddedSubscription() {
@@ -47,13 +43,6 @@ class FbRealtimeRepository {
         'message': data,
       },
     );
-    // await recipientRef.child('peering').set(
-    //   {
-    //     'sender': senderId,
-    //     'message': data,
-    //   },
-    // );
-    //await ref.remove();
   }
 
   Future<List<String>> getAllUsers() async {
@@ -66,6 +55,8 @@ class FbRealtimeRepository {
   }
 
   Future<void> clearAll() async {
-    await ref.remove();
+    for (final ref in refs) {
+      await ref.remove();
+    }
   }
 }

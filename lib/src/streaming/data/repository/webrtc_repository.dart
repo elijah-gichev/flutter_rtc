@@ -36,6 +36,14 @@ class WebRTCRepository {
     }
   }
 
+  // Future<void> setOnTrack(
+  //   dynamic Function(RTCTrackEvent) onTrack,
+  //   dynamic Function(MediaStream, MediaStreamTrack) onAddTrack,
+  // ) async {
+  //   _peerConnection.onTrack = onTrack;
+  //   _peerConnection.onAddTrack = onAddTrack;
+  // }
+
   Future<void> closePeerConnection() async {
     await _peerConnection.close();
   }
@@ -110,7 +118,9 @@ class WebRTCRepository {
   }
 
   Future<void> _addTracksToPeer(
-      List<MediaStreamTrack> tracks, MediaStream localStream) async {
+    List<MediaStreamTrack> tracks,
+    MediaStream localStream,
+  ) async {
     tracks.forEach((track) async {
       await _peerConnection.addTrack(track, localStream);
     });
