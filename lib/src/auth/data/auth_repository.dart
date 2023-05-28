@@ -14,7 +14,6 @@ class AuthRepository {
     await ref.child(accountID).set(
       {
         'account_id': accountID,
-        // 'peering_data': ['aaa', 'aaa'],
       },
     );
   }
