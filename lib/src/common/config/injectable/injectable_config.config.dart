@@ -10,19 +10,21 @@ import 'package:firebase_database/firebase_database.dart' as _i4;
 import 'package:flutter_webrtc_example/src/auth/data/auth_repository.dart'
     as _i7;
 import 'package:flutter_webrtc_example/src/auth/presentation/bloc/cubit/auth_cubit.dart'
-    as _i12;
-import 'package:flutter_webrtc_example/src/common/config/injectable/app_module.dart'
     as _i13;
+import 'package:flutter_webrtc_example/src/common/config/injectable/app_module.dart'
+    as _i14;
 import 'package:flutter_webrtc_example/src/common/services/id_service.dart'
     as _i9;
 import 'package:flutter_webrtc_example/src/streaming/data/repository/fb_realtime_repository.dart'
     as _i8;
 import 'package:flutter_webrtc_example/src/streaming/data/repository/webrtc_repository.dart'
     as _i6;
-import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/peer_connection/peer_connection_bloc.dart'
+import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/incoming_call/incoming_call_cubit.dart'
     as _i10;
-import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/users/users_cubit.dart'
+import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/peer_connection/peer_connection_bloc.dart'
     as _i11;
+import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/users/users_cubit.dart'
+    as _i12;
 import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 import 'package:shared_preferences/shared_preferences.dart'
@@ -57,20 +59,24 @@ Future<_i1.GetIt> $initGetIt(
       () => _i8.FbRealtimeRepository(get<_i4.FirebaseDatabase>()));
   gh.lazySingleton<_i9.IdService>(
       () => _i9.IdService(get<_i5.SharedPreferences>()));
-  gh.factory<_i10.PeerConnectionBloc>(() => _i10.PeerConnectionBloc(
+  gh.factory<_i10.IncomingCallCubit>(() => _i10.IncomingCallCubit(
+        get<_i8.FbRealtimeRepository>(),
+        get<_i9.IdService>(),
+      ));
+  gh.factory<_i11.PeerConnectionBloc>(() => _i11.PeerConnectionBloc(
         get<_i8.FbRealtimeRepository>(),
         get<_i6.WebRTCRepository>(),
         get<_i9.IdService>(),
       ));
-  gh.factory<_i11.UsersCubit>(() => _i11.UsersCubit(
+  gh.factory<_i12.UsersCubit>(() => _i12.UsersCubit(
         get<_i8.FbRealtimeRepository>(),
         get<_i9.IdService>(),
       ));
-  gh.factory<_i12.AuthCubit>(() => _i12.AuthCubit(
+  gh.factory<_i13.AuthCubit>(() => _i13.AuthCubit(
         get<_i7.AuthRepository>(),
         get<_i9.IdService>(),
       ));
   return get;
 }
 
-class _$AppModule extends _i13.AppModule {}
+class _$AppModule extends _i14.AppModule {}
