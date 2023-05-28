@@ -24,7 +24,7 @@ abstract class _$AppRouter extends RootStackRouter {
     UsersRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const UsersScreen(),
+        child: WrappedRoute(child: const UsersScreen()),
       );
     },
     StreamingRoute.name: (routeData) {
@@ -35,6 +35,18 @@ abstract class _$AppRouter extends RootStackRouter {
           args.id,
           key: args.key,
         ),
+      );
+    },
+    HomeRootRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const HomeRootScreen(),
+      );
+    },
+    HomeRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: HomeScreen(),
       );
     },
   };
@@ -104,4 +116,32 @@ class StreamingRouteArgs {
   String toString() {
     return 'StreamingRouteArgs{id: $id, key: $key}';
   }
+}
+
+/// generated route for
+/// [HomeRootScreen]
+class HomeRootRoute extends PageRouteInfo<void> {
+  const HomeRootRoute({List<PageRouteInfo>? children})
+      : super(
+          HomeRootRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'HomeRootRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [HomeScreen]
+class HomeRoute extends PageRouteInfo<void> {
+  const HomeRoute({List<PageRouteInfo>? children})
+      : super(
+          HomeRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'HomeRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
