@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc_example/src/auth/presentation/bloc/cubit/auth_cubit.dart';
@@ -38,17 +39,17 @@ class Application extends StatelessWidget {
           create: (_) => GetIt.I<IncomingCallCubit>(),
         ),
       ],
-      child: HomeScreen(),
+      child: MaterialScreen(),
     );
   }
 }
 
-class HomeScreen extends StatefulWidget {
+class MaterialScreen extends StatefulWidget {
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _MaterialScreenState createState() => _MaterialScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _MaterialScreenState extends State<MaterialScreen> {
   final _appRouter = AppRouter();
 
   final List<RouteItem> items = <RouteItem>[
@@ -75,66 +76,68 @@ class _HomeScreenState extends State<HomeScreen> {
       theme: ThemeData(
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
-      // home: Scaffold(
-      //   appBar: AppBar(
-      //     title: Text('User: ${GetIt.I<IdService>().id}'),
-      //   ),
-      //   body: BlocListener<IncomingCallCubit, IncomingCallState>(
-      //     listener: (context, state) {
-      //       if (state is IncomingCallAdmission) {
-      //         showIncomingCallAlert(
-      //           context,
-      //           state.callerId,
-      //           onRejectCall: () async {
-      //             await context.read<IncomingCallCubit>().rejectIncomingCall();
-      //             //Navigator.of(context).pop();
-      //           },
-      //           onTakeCall: () {
-      //             Navigator.push(
-      //               context,
-      //               MaterialPageRoute(
-      //                 builder: (_) => StreamingScreen(state.callerId),
-      //               ),
-      //             );
-      //           },
-      //         );
-      //       }
-      //     },
-      //     child: BlocBuilder<AuthCubit, AuthState>(
-      //       builder: (context, state) {
-      //         if (state is AuthInProgress) {
-      //           return Center(
-      //             child: CircularProgressIndicator(),
-      //           );
-      //         }
-
-      //         if (state is AuthCompleted) {
-      //           return ListView.builder(
-      //             shrinkWrap: true,
-      //             padding: const EdgeInsets.all(0.0),
-      //             itemCount: items.length,
-      //             itemBuilder: (context, i) {
-      //               final item = items[i];
-      //               return ListBody(
-      //                 children: <Widget>[
-      //                   ListTile(
-      //                     title: Text(item.title),
-      //                     onTap: () => item.push(context),
-      //                     trailing: Icon(Icons.arrow_right),
-      //                   ),
-      //                   Divider()
-      //                 ],
-      //               );
-      //             },
-      //           );
-      //         } else {
-      //           // Todo add alert
-      //           return SizedBox();
-      //         }
-      //       },
-      //     ),
-      //   ),
-      // ),
     );
+    // home: Scaffold(
+    //   appBar: AppBar(
+    //     title: Text('User: ${GetIt.I<IdService>().id}'),
+    //   ),
+    //   body: BlocListener<IncomingCallCubit, IncomingCallState>(
+    //     listener: (context, state) {
+    //       if (state is IncomingCallAdmission) {
+    //         showIncomingCallAlert(
+    //           context,
+    //           state.callerId,
+    //           onRejectCall: () async {
+    //             await context
+    //                 .read<IncomingCallCubit>()
+    //                 .rejectIncomingCall();
+    //             //Navigator.of(context).pop();
+    //           },
+    //           onTakeCall: () {
+    //             Navigator.push(
+    //               context,
+    //               MaterialPageRoute(
+    //                 builder: (_) => StreamingScreen(state.callerId),
+    //               ),
+    //             );
+    //           },
+    //         );
+    //       }
+    //     },
+    //     child: BlocBuilder<AuthCubit, AuthState>(
+    //       builder: (context, state) {
+    //         if (state is AuthInProgress) {
+    //           return Center(
+    //             child: CircularProgressIndicator(),
+    //           );
+    //         }
+
+    //         if (state is AuthCompleted) {
+    //           return ListView.builder(
+    //             shrinkWrap: true,
+    //             padding: const EdgeInsets.all(0.0),
+    //             itemCount: items.length,
+    //             itemBuilder: (context, i) {
+    //               final item = items[i];
+    //               return ListBody(
+    //                 children: <Widget>[
+    //                   ListTile(
+    //                     title: Text(item.title),
+    //                     onTap: () => item.push(context),
+    //                     trailing: Icon(Icons.arrow_right),
+    //                   ),
+    //                   Divider()
+    //                 ],
+    //               );
+    //             },
+    //           );
+    //         } else {
+    //           // Todo add alert
+    //           return SizedBox();
+    //         }
+    //       },
+    //     ),
+    //   ),
+    // ),
   }
 }

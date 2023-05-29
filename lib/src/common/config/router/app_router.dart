@@ -28,6 +28,7 @@ class AppRouter extends _$AppRouter {
           initial: true,
           children: [
             AutoRoute(
+              initial: true,
               page: HomeRoute.page,
             ),
             AutoRoute(
@@ -35,7 +36,6 @@ class AppRouter extends _$AppRouter {
             ),
             AutoRoute(
               page: SettingsRoute.page,
-              initial: true,
             ),
           ],
         ),

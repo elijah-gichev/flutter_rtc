@@ -91,7 +91,10 @@ class _IncomingCallDialogBoxState extends State<IncomingCallDialogBox> {
                 ),
                 child: Center(
                   child: TextButton(
-                    onPressed: widget.onTakeCall,
+                    onPressed: () {
+                      widget.onTakeCall();
+                      Navigator.of(context).pop();
+                    },
                     child: Text(
                       'Принять',
                       style: TextStyle(

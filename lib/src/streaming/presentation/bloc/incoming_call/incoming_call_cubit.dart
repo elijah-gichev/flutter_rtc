@@ -22,10 +22,12 @@ class IncomingCallCubit extends Cubit<IncomingCallState> {
     _fbRealtimeRepository.addOnChildAddedSubscription(
       _idService.id,
       (event) {
-        final data = event.snapshot.value as Map<Object?, Object?>;
-        final senderId = data['sender'] as String;
-        if (senderId != _idService.id) {
-          emit(IncomingCallAdmission(senderId));
+        if (state is! IncomingCallAdmission) {
+          final data = event.snapshot.value as Map<Object?, Object?>;
+          final senderId = data['sender'] as String;
+          if (senderId != _idService.id) {
+            emit(IncomingCallAdmission(senderId));
+          }
         }
       },
     );
@@ -33,5 +35,9 @@ class IncomingCallCubit extends Cubit<IncomingCallState> {
 
   Future<void> rejectIncomingCall() async {
     await _fbRealtimeRepository.clearAll();
+  }
+
+  void acceptIncomingCall() {
+    emit(IncomingCallInitial());
   }
 }

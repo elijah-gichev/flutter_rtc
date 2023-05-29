@@ -29,6 +29,8 @@ dependencies:
 
   auto_route: ^7.2.0
 
+  animated_bottom_navigation_bar: ^1.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
