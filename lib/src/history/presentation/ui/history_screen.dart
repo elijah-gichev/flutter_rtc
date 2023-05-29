@@ -9,39 +9,6 @@ import 'package:intl/intl.dart';
 
 @RoutePage()
 class HistoryScreen extends StatelessWidget implements AutoRouteWrapper {
-  // final histories = <History>[
-  //   History(
-  //     callerId: 'asasaa',
-  //     callerName: 'John Doe',
-  //     callTime: DateTime.now(),
-  //   ),
-  //   History(
-  //     callerId: 'asasaa',
-  //     callerName: 'John Doe',
-  //     callTime: DateTime.now(),
-  //   ),
-  //   History(
-  //     callerId: 'asasaa',
-  //     callerName: 'John Doe',
-  //     callTime: DateTime(2023, 3, 1),
-  //   ),
-  //   History(
-  //     callerId: 'asasaa',
-  //     callerName: 'John Doe',
-  //     callTime: DateTime(2023, 1, 1),
-  //   ),
-  //   History(
-  //     callerId: 'asasaa',
-  //     callerName: 'John Doe',
-  //     callTime: DateTime.now(),
-  //   ),
-  //   History(
-  //     callerId: 'asasaa',
-  //     callerName: 'John Doe old',
-  //     callTime: DateTime(2022, 1, 1),
-  //   ),
-  // ];
-
   @override
   Widget wrappedRoute(BuildContext context) {
     return BlocProvider(
@@ -146,7 +113,9 @@ class HistoryScreen extends StatelessWidget implements AutoRouteWrapper {
         if (currentDay != lastDay) {
           historiesByDays.add(histories.sublist(currentIndex, i + 1));
 
-          currentIndex = i;
+          print('$currentIndex - ${i + 1}');
+
+          currentIndex = i + 1;
           lastDay = histories[i].callTime.millisecondsSinceEpoch ~/
               1000 /
               60 /
@@ -155,7 +124,9 @@ class HistoryScreen extends StatelessWidget implements AutoRouteWrapper {
         }
       }
 
-      historiesByDays.add(histories.sublist(currentIndex, histories.length));
+      if (currentIndex != histories.length) {
+        historiesByDays.add(histories.sublist(currentIndex, histories.length));
+      }
     }
 
     return historiesByDays;
