@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_webrtc_example/src/auth/presentation/bloc/cubit/auth_cubit.dart';
 import 'package:flutter_webrtc_example/src/common/config/constants.dart';
 import 'package:flutter_webrtc_example/src/common/config/router/app_router.dart';
 import 'package:flutter_webrtc_example/src/common/theme/palette.dart';
@@ -41,7 +42,9 @@ class HomeRootScreen extends StatelessWidget {
         routes: [
           HomeRoute(),
           HistoryRoute(),
-          SettingsRoute(),
+          SettingsRoute(
+            user: (context.read<AuthCubit>().state as AuthCompleted).user,
+          ),
         ],
         transitionBuilder: (context, child, animation) => FadeTransition(
           opacity: animation,

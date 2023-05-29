@@ -9,11 +9,17 @@ class AuthRepository {
 
   AuthRepository(this._database);
 
-  Future<void> register(String accountID) async {
+  Future<void> register({
+    required String accountID,
+    required String name,
+    required bool isOnline,
+  }) async {
     final ref = _database.ref();
     await ref.child(accountID).set(
       {
         'account_id': accountID,
+        'name': name,
+        'is_online': isOnline,
       },
     );
   }

@@ -1,9 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_webrtc_example/src/auth/presentation/bloc/cubit/auth_cubit.dart';
 import 'package:flutter_webrtc_example/src/common/config/constants.dart';
 import 'package:flutter_webrtc_example/src/common/config/router/app_router.dart';
 import 'package:flutter_webrtc_example/src/common/theme/palette.dart';
 import 'package:flutter_webrtc_example/src/common/widgets/action_button.dart';
+import 'package:flutter_webrtc_example/src/home/presentation/ui/home_screen.dart';
 
 @RoutePage()
 class LoginScreen extends StatelessWidget {
@@ -65,20 +68,29 @@ class LoginScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ActionButton(
-                    title: 'Join a meeting',
-                    onPressed: () {
-                      context.router.push(const UsersRoute());
+                  BlocBuilder<AuthCubit, AuthState>(
+                    builder: (context, state) {
+                      if (state is AuthInProgress) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: CustomColors.primary,
+                            ),
+                          ),
+                        );
+                      }
+                      return Container();
                     },
                   ),
-                  SizedBox(height: 20),
                   Row(
                     children: [
                       Expanded(
                         child: ActionButton(
                           title: 'Login',
-                          onPressed: () {
-                            context.router.push(const UsersRoute());
+                          onPressed: () async {
+                            await context.read<AuthCubit>().logIn();
+                            context.router.replace(const HomeRootRoute());
                           },
                         ),
                       ),
@@ -88,7 +100,7 @@ class LoginScreen extends StatelessWidget {
                           title: 'Sign up',
                           filled: false,
                           onPressed: () {
-                            context.router.push(const UsersRoute());
+                            context.router.replace(const HomeRootRoute());
                           },
                         ),
                       ),
