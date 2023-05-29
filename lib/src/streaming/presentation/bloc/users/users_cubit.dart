@@ -22,7 +22,8 @@ class UsersCubit extends Cubit<UsersState> {
 
       final users = await _fbRealtimeRepository.getAllUsers();
 
-      users.removeWhere((user) => user.id == myId || !user.isOnline);
+      users.removeWhere((user) => user.id == myId);
+      users.removeWhere((user) => !user.isOnline);
 
       emit(UsersCompleted(users));
     } catch (e) {

@@ -62,9 +62,7 @@ class HomeRootScreen extends StatelessWidget implements AutoRouteWrapper {
         routes: [
           HomeRoute(),
           HistoryRoute(),
-          SettingsRoute(
-            user: (context.read<AuthCubit>().state as AuthCompleted).user,
-          ),
+          SettingsRoute(),
         ],
         transitionBuilder: (context, child, animation) => FadeTransition(
           opacity: animation,

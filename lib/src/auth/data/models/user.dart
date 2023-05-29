@@ -20,4 +20,16 @@ class User {
       isOnline: data['is_online'] as bool,
     );
   }
+
+  User copyWith({
+    String? id,
+    String? name,
+    bool? isOnline,
+  }) {
+    return User(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      isOnline: isOnline ?? this.isOnline,
+    );
+  }
 }

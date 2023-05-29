@@ -100,26 +100,28 @@ class HistoryScreen extends StatelessWidget implements AutoRouteWrapper {
         return a.callTime.compareTo(b.callTime);
       });
 
-      var lastDay = histories.first.callTime.millisecondsSinceEpoch ~/
+      var lastDay = histories.first.callTime.millisecondsSinceEpoch /
           1000 /
           60 /
-          60 /
+          60 ~/
           24;
       int currentIndex = 0;
 
       for (var i = 0; i < histories.length; i++) {
         final currentDay =
-            histories[i].callTime.millisecondsSinceEpoch ~/ 1000 / 60 / 60 / 24;
+            histories[i].callTime.millisecondsSinceEpoch / 1000 / 60 / 60 ~/ 24;
+
+        print('$currentDay - $lastDay');
         if (currentDay != lastDay) {
           historiesByDays.add(histories.sublist(currentIndex, i + 1));
 
           print('$currentIndex - ${i + 1}');
 
           currentIndex = i + 1;
-          lastDay = histories[i].callTime.millisecondsSinceEpoch ~/
+          lastDay = histories[i].callTime.millisecondsSinceEpoch /
               1000 /
               60 /
-              60 /
+              60 ~/
               24;
         }
       }

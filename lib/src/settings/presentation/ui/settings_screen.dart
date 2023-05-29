@@ -1,15 +1,15 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_webrtc_example/src/auth/data/models/user.dart';
 import 'package:flutter_webrtc_example/src/auth/presentation/bloc/cubit/auth_cubit.dart';
 import 'package:flutter_webrtc_example/src/common/config/router/app_router.dart';
 import 'package:flutter_webrtc_example/src/common/theme/palette.dart';
+import 'package:flutter_webrtc_example/src/settings/presentation/ui/widgets/change_name_dialog.dart';
+import 'package:flutter_webrtc_example/src/settings/presentation/ui/widgets/change_status_dialog.dart';
 
 @RoutePage()
 class SettingsScreen extends StatelessWidget {
-  final User user;
-  const SettingsScreen({required this.user, super.key});
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,67 +24,84 @@ class SettingsScreen extends StatelessWidget {
             fit: BoxFit.cover,
           ),
           SizedBox(height: 20),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 25),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  user.name,
-                  style: TextStyle(
-                    fontSize: 35,
-                    fontWeight: FontWeight.w700,
-                    color: CustomColors.primary,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'ID: ' + user.id,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
-                    color: CustomColors.secondary,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 10),
-                RichText(
-                  text: TextSpan(
-                    text: 'Status: ',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      color: CustomColors.secondary,
-                    ),
+          BlocBuilder<AuthCubit, AuthState>(
+            buildWhen: (previous, current) {
+              return current is AuthCompleted;
+            },
+            builder: (context, state) {
+              if (state is AuthCompleted) {
+                final user = state.user;
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 25),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextSpan(
-                        text: user.isOnline ? 'ONLINE' : 'OFFLINE',
-                        style: TextStyle(
-                          color: user.isOnline
-                              ? Colors.green
-                              : CustomColors.cancelCallColor,
-                          fontWeight: FontWeight.w600,
-                          fontStyle: FontStyle.italic,
+                      GestureDetector(
+                        onTap: () {
+                          showChangeNameDialog(context, user.name);
+                        },
+                        child: Text(
+                          user.name,
+                          style: TextStyle(
+                            fontSize: 35,
+                            fontWeight: FontWeight.w700,
+                            color: CustomColors.primary,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'ID: ' + user.id,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          color: CustomColors.secondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 10),
+                      GestureDetector(
+                        onTap: () {
+                          showChangeStatusDialog(context, user.isOnline);
+                        },
+                        child: RichText(
+                          text: TextSpan(
+                            text: 'Status: ',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                              color: CustomColors.secondary,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: user.isOnline ? 'ONLINE' : 'OFFLINE',
+                                style: TextStyle(
+                                  color: user.isOnline
+                                      ? Colors.green
+                                      : CustomColors.cancelCallColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Divider(
+                        color: CustomColors.primary,
+                        thickness: 2,
                       ),
                     ],
                   ),
-                ),
-                SizedBox(height: 20),
-                Divider(
-                  color: CustomColors.primary,
-                  thickness: 2,
-                ),
-              ],
-            ),
+                );
+              }
+
+              return Container();
+            },
           ),
           SizedBox(height: 40),
-          _SettingsTile(
-            title: 'Profile',
-            icon: Icons.person_3_outlined,
-            onTap: () {},
-          ),
           _SettingsTile(
             title: 'Logout',
             icon: Icons.logout,
