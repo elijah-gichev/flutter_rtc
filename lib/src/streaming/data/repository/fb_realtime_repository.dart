@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_webrtc_example/src/auth/data/models/user.dart';
 import 'package:injectable/injectable.dart';
 
 @lazySingleton
@@ -45,13 +46,18 @@ class FbRealtimeRepository {
     );
   }
 
-  Future<List<String>> getAllUsers() async {
+  Future<List<User>> getAllUsers() async {
     final rootRef = _database.ref();
     final res = await rootRef.get();
-    return res.children
-        .map((snapshot) =>
-            (snapshot.value as Map<Object?, Object?>)['account_id'].toString())
-        .toList();
+    return res.children.map((snapshot) {
+      return User.fromFirebase(snapshot);
+    }).toList();
+  }
+
+  Future<User> getUserById(String id) async {
+    final ref = _database.ref(id);
+    final res = await ref.get();
+    return User.fromFirebase(res);
   }
 
   Future<void> clearAll() async {

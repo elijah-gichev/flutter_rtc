@@ -6,9 +6,9 @@ abstract class UsersState {}
 class UsersInProgress extends UsersState {}
 
 class UsersCompleted extends UsersState {
-  final List<String> ids;
+  final List<User> users;
 
-  UsersCompleted(this.ids);
+  UsersCompleted(this.users);
 }
 
 class UsersFailure extends UsersState {}

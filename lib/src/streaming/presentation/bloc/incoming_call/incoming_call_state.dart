@@ -10,7 +10,7 @@ class IncomingCallInitial extends IncomingCallState {
 }
 
 class IncomingCallAdmission extends IncomingCallState {
-  final String callerId;
+  final User callerUser;
 
-  const IncomingCallAdmission(this.callerId);
+  const IncomingCallAdmission(this.callerUser);
 }

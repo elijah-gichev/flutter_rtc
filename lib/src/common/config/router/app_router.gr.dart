@@ -65,7 +65,7 @@ abstract class _$AppRouter extends RootStackRouter {
           orElse: () => const HistoryRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: HistoryScreen(key: args.key),
+        child: WrappedRoute(child: HistoryScreen(key: args.key)),
       );
     },
   };

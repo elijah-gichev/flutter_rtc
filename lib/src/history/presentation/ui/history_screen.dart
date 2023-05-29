@@ -1,71 +1,125 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc_example/src/common/theme/palette.dart';
 import 'package:flutter_webrtc_example/src/history/data/models/history.dart';
+import 'package:flutter_webrtc_example/src/history/presentation/bloc/cubit/history_cubit.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 
 @RoutePage()
-class HistoryScreen extends StatelessWidget {
-  final histories = <History>[
-    History(
-      callerId: 'asasaa',
-      callerName: 'John Doe',
-      callTime: DateTime.now(),
-    ),
-    History(
-      callerId: 'asasaa',
-      callerName: 'John Doe',
-      callTime: DateTime.now(),
-    ),
-    History(
-      callerId: 'asasaa',
-      callerName: 'John Doe',
-      callTime: DateTime(2023, 3, 1),
-    ),
-    History(
-      callerId: 'asasaa',
-      callerName: 'John Doe',
-      callTime: DateTime(2023, 1, 1),
-    ),
-    History(
-      callerId: 'asasaa',
-      callerName: 'John Doe',
-      callTime: DateTime.now(),
-    ),
-    History(
-      callerId: 'asasaa',
-      callerName: 'John Doe old',
-      callTime: DateTime(2022, 1, 1),
-    ),
-  ];
+class HistoryScreen extends StatelessWidget implements AutoRouteWrapper {
+  // final histories = <History>[
+  //   History(
+  //     callerId: 'asasaa',
+  //     callerName: 'John Doe',
+  //     callTime: DateTime.now(),
+  //   ),
+  //   History(
+  //     callerId: 'asasaa',
+  //     callerName: 'John Doe',
+  //     callTime: DateTime.now(),
+  //   ),
+  //   History(
+  //     callerId: 'asasaa',
+  //     callerName: 'John Doe',
+  //     callTime: DateTime(2023, 3, 1),
+  //   ),
+  //   History(
+  //     callerId: 'asasaa',
+  //     callerName: 'John Doe',
+  //     callTime: DateTime(2023, 1, 1),
+  //   ),
+  //   History(
+  //     callerId: 'asasaa',
+  //     callerName: 'John Doe',
+  //     callTime: DateTime.now(),
+  //   ),
+  //   History(
+  //     callerId: 'asasaa',
+  //     callerName: 'John Doe old',
+  //     callTime: DateTime(2022, 1, 1),
+  //   ),
+  // ];
+
+  @override
+  Widget wrappedRoute(BuildContext context) {
+    return BlocProvider(
+      create: (_) => GetIt.I<HistoryCubit>()..loadHistory(),
+      child: this,
+    );
+  }
 
   HistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(10.0),
-        child: ListView(
-          children: _sortHistoriesByDays(histories).map((historiesByDays) {
-            return Column(children: [
-              Padding(
-                padding: EdgeInsets.only(bottom: 10.0),
+      body: BlocBuilder<HistoryCubit, HistoryState>(
+        builder: (context, state) {
+          if (state is HistoryLoadingInProgress) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: CustomColors.primary,
+              ),
+            );
+          }
+
+          if (state is HistoryLoadingComplete) {
+            final histories = state.history;
+
+            if (histories.isEmpty) {
+              return Center(
                 child: Text(
-                  DateFormat('dd-MM-yyyy | EEEE')
-                      .format(historiesByDays.first.callTime),
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  'История пуста',
+                  style: TextStyle(
+                    color: CustomColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            }
+            return Container(
+              padding: EdgeInsets.all(10.0),
+              child: ListView(
+                children:
+                    _sortHistoriesByDays(histories).map((historiesByDays) {
+                  return Column(children: [
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Text(
+                        DateFormat('dd-MM-yyyy | EEEE').format(
+                          historiesByDays.first.callTime,
+                        ),
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    ...historiesByDays.map(
+                      (h) => Padding(
+                        padding: EdgeInsets.only(bottom: 10.0),
+                        child: _HistoryItem(h),
+                      ),
+                    )
+                  ]);
+                }).toList(),
+              ),
+            );
+          }
+
+          if (state is HistoryLoadingFailure) {
+            return Center(
+              child: Text(
+                'Ошибка загрузки данных',
+                style: TextStyle(
+                  color: CustomColors.primary,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              ...historiesByDays.map(
-                (h) => Padding(
-                  padding: EdgeInsets.only(bottom: 10.0),
-                  child: _HistoryItem(h),
-                ),
-              )
-            ]);
-          }).toList(),
-        ),
+            );
+          }
+
+          return Container();
+        },
       ),
     );
   }

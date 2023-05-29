@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter_webrtc_example/src/auth/data/models/user.dart';
 import 'package:flutter_webrtc_example/src/common/services/id_service.dart';
 import 'package:flutter_webrtc_example/src/streaming/data/repository/fb_realtime_repository.dart';
 import 'package:injectable/injectable.dart';
@@ -21,7 +22,7 @@ class UsersCubit extends Cubit<UsersState> {
 
       final users = await _fbRealtimeRepository.getAllUsers();
 
-      users.removeWhere((userId) => userId == myId);
+      users.removeWhere((user) => user.id == myId || !user.isOnline);
 
       emit(UsersCompleted(users));
     } catch (e) {

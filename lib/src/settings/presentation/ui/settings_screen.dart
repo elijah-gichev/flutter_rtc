@@ -75,8 +75,6 @@ class SettingsScreen extends StatelessWidget {
                 Divider(
                   color: CustomColors.primary,
                   thickness: 2,
-                  // indent: 50,
-                  // endIndent: 50,
                 ),
               ],
             ),

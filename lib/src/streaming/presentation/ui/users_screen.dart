@@ -1,9 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_webrtc_example/src/auth/data/models/user.dart';
 import 'package:flutter_webrtc_example/src/common/config/router/app_router.dart';
 import 'package:flutter_webrtc_example/src/common/theme/palette.dart';
-import 'package:flutter_webrtc_example/src/streaming/data/models/user.dart';
+import 'package:flutter_webrtc_example/src/history/data/models/history.dart';
+import 'package:flutter_webrtc_example/src/history/presentation/bloc/cubit/history_cubit.dart';
 import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/users/users_cubit.dart';
 import 'package:get_it/get_it.dart';
 
@@ -11,8 +13,15 @@ import 'package:get_it/get_it.dart';
 class UsersScreen extends StatelessWidget implements AutoRouteWrapper {
   @override
   Widget wrappedRoute(BuildContext context) {
-    return BlocProvider(
-      create: (_) => GetIt.I<UsersCubit>()..load(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => GetIt.I<UsersCubit>()..load(),
+        ),
+        BlocProvider(
+          create: (_) => GetIt.I<HistoryCubit>(),
+        ),
+      ],
       child: this,
     );
   }
@@ -62,12 +71,10 @@ class UsersScreen extends StatelessWidget implements AutoRouteWrapper {
                 child: ListView.builder(
                   shrinkWrap: true,
                   padding: const EdgeInsets.all(0.0),
-                  itemCount: state.ids.length,
+                  itemCount: state.users.length,
                   itemBuilder: (context, i) {
-                    final id = state.ids[i];
-                    return _UserItem(
-                      User(id: id, name: 'elijah'),
-                    );
+                    final user = state.users[i];
+                    return _UserItem(user);
                   },
                 ),
               );
@@ -83,9 +90,9 @@ class UsersScreen extends StatelessWidget implements AutoRouteWrapper {
 }
 
 class _UserItem extends StatelessWidget {
-  final User _user;
+  final User user;
 
-  const _UserItem(this._user);
+  const _UserItem(this.user);
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +111,7 @@ class _UserItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _user.name,
+                  user.name,
                   style: TextStyle(
                     color: CustomColors.background,
                     fontWeight: FontWeight.w600,
@@ -114,10 +121,17 @@ class _UserItem extends StatelessWidget {
                 SizedBox(height: 10),
                 MaterialButton(
                   onPressed: () {
+                    context.read<HistoryCubit>().addHistory(
+                          History.fromUser(
+                            user,
+                            isIncomingCall: true,
+                          ),
+                        );
+
                     context.router.push(
                       StreamingRoute(
-                        id: _user.id,
-                        name: _user.name,
+                        id: user.id,
+                        name: user.name,
                       ),
                     );
                   },
@@ -136,7 +150,7 @@ class _UserItem extends StatelessWidget {
             padding: EdgeInsets.only(right: 10, bottom: 10),
             alignment: Alignment.bottomRight,
             child: Text(
-              'ID: ' + _user.id,
+              'ID: ' + user.id,
               style: TextStyle(
                 color: CustomColors.secondary,
                 fontWeight: FontWeight.w400,

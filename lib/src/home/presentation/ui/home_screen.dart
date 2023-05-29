@@ -8,30 +8,50 @@ import 'package:flutter_webrtc_example/src/common/theme/palette.dart';
 import 'package:flutter_webrtc_example/src/common/widgets/action_button.dart';
 import 'package:flutter_webrtc_example/src/common/widgets/custom_bottom_navbar.dart';
 import 'package:flutter_webrtc_example/src/common/widgets/incoming_call_alert.dart';
+import 'package:flutter_webrtc_example/src/history/data/models/history.dart';
+import 'package:flutter_webrtc_example/src/history/presentation/bloc/cubit/history_cubit.dart';
 import 'package:flutter_webrtc_example/src/streaming/presentation/bloc/incoming_call/incoming_call_cubit.dart';
+import 'package:get_it/get_it.dart';
 
 @RoutePage()
-class HomeRootScreen extends StatelessWidget {
+class HomeRootScreen extends StatelessWidget implements AutoRouteWrapper {
   const HomeRootScreen({super.key});
+
+  @override
+  Widget wrappedRoute(BuildContext context) {
+    return BlocProvider(
+      create: (_) => GetIt.I<HistoryCubit>(),
+      child: this,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<IncomingCallCubit, IncomingCallState>(
+      listenWhen: (previous, current) {
+        return previous is! IncomingCallAdmission;
+      },
       listener: (context, state) {
         final topRoute = context.router.topRoute;
 
         if (state is IncomingCallAdmission &&
             topRoute.name != StreamingRoute.name) {
+          final history = History.fromUser(
+            state.callerUser,
+            isIncomingCall: false,
+          );
+          context.read<HistoryCubit>().addHistory(history);
+
           showIncomingCallAlert(
             context,
-            state.callerId,
+            state.callerUser.name,
             onRejectCall: () async {
               await context.read<IncomingCallCubit>().rejectIncomingCall();
             },
             onTakeCall: () {
               context.read<IncomingCallCubit>().acceptIncomingCall();
               context.router.push(StreamingRoute(
-                id: state.callerId,
+                id: state.callerUser.id,
                 name: 'fixed',
               ));
             },
