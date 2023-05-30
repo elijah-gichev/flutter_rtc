@@ -176,6 +176,20 @@ class _HistoryItem extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 10),
+                Container(
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    _history.isIncomingCall
+                        ? 'Входящий звонок'
+                        : 'Исходящий звонок',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: CustomColors.background,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
                 Text(
                   DateFormat('hh:mm dd MMMM').format(_history.callTime),
                   style: TextStyle(

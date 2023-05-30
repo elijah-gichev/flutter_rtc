@@ -51,16 +51,6 @@ class SettingsScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 10),
-                      Text(
-                        'ID: ' + user.id,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                          color: CustomColors.secondary,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 10),
                       GestureDetector(
                         onTap: () {
                           showChangeStatusDialog(context, user.isOnline);
@@ -87,6 +77,16 @@ class SettingsScreen extends StatelessWidget {
                             ],
                           ),
                         ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'ID: ' + user.id,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          color: CustomColors.secondary,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 20),
                       Divider(

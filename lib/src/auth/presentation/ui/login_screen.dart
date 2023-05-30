@@ -47,7 +47,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Platform of online learning',
+                      'Platform of online calling',
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
