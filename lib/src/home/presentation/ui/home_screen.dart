@@ -147,15 +147,16 @@ class HomeScreen extends StatelessWidget {
                   onPressed: () {
                     context.router.push(UsersRoute());
                   },
+                  filled: false,
                 ),
                 SizedBox(height: 35),
-                ActionButton(
-                  filled: false,
-                  onPressed: () {
-                    context.router.push(UsersRoute());
-                  },
-                  title: 'Join a meeting',
-                ),
+                // ActionButton(
+                //   filled: false,
+                //   onPressed: () {
+                //     context.router.push(UsersRoute());
+                //   },
+                //   title: 'Join a meeting',
+                // ),
               ]),
             ),
           ],
